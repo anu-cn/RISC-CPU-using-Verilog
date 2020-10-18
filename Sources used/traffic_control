@@ -1,0 +1,213 @@
+module traffic_control(n_lights, s_lights,e_lights,w_lights,clk,rst_a);
+    input clk, rst_a;
+    output reg [2:0] n_lights,s_lights,e_lights,w_lights;
+
+    reg [2:0] state;
+    
+    //8 states
+    parameter [2:0] north=3'b000;
+    parameter [2:0] north_y=3'b001;
+    parameter [2:0] south=3'b010;
+    parameter [2:0] south_y=3'b011;
+    parameter [2:0] east=3'b100;
+    parameter [2:0] east_y=3'b101;
+    parameter [2:0] west=3'b110;
+    parameter [2:0] west_y=3'b111;
+    
+    reg [2:0] count;
+
+   always @(posedge clk, posedge rst_a)
+     begin
+        if (rst_a)
+            begin
+                state=north;
+                count =3'b000;
+            end
+        else
+            begin
+                case (state)
+                north :
+                    begin
+                        if (count==3'b111)
+                            begin
+                            count=3'b000;
+                            state=north_y;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=north;
+                            end
+                    end
+
+                north_y :
+                    begin
+                        if (count==3'b011)
+                            begin
+                            count=3'b000;
+                            state=south;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=north_y;
+                        end
+                    end
+
+               south :
+                    begin
+                        if (count==3'b111)
+                            begin
+                            count=3'b000;
+                            state=south_y;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=south;
+                        end
+                    end
+
+                south_y :
+                    begin
+                        if (count==3'b011)
+                            begin
+                            count=3'b000;
+                            state=east;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=south_y;
+                            end
+                        end
+
+                east :
+                    begin
+                        if (count==3'b111)
+                            begin
+                            count=3'b000;
+                            state=east_y;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=east;
+                            end
+                        end
+
+                east_y :
+                    begin
+                        if (count==3'b011)
+                            begin
+                            count=3'b000;
+                            state=west;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=east_y;
+                            end
+                        end
+
+                west :
+                    begin
+                        if (count==3'b111)
+                            begin
+                            state=west_y;
+                            count=3'b000;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=west;
+                            end
+                        end
+
+                west_y :
+                    begin
+                        if (count==3'b011)
+                            begin
+                            state=north;
+                            count=3'b000;
+                            end
+                        else
+                            begin
+                            count=count+3'b001;
+                            state=west_y;
+                            end
+                        end
+                endcase // case (state)
+            end
+    end //always @()
+
+
+always @(state)
+     begin
+         case (state)
+            north :
+                begin
+                    n_lights = 3'b001; //G
+                    s_lights = 3'b100; //R
+                    e_lights = 3'b100; //R
+                    w_lights = 3'b100; //R
+                end // case: north
+
+            north_y :
+                begin
+                    n_lights = 3'b010; //Y
+                    s_lights = 3'b100; //R
+                    e_lights = 3'b100; //R
+                    w_lights = 3'b100; //R
+                end // case: north_y
+
+            south :
+                begin
+                    n_lights = 3'b100; //R
+                    s_lights = 3'b001; //G
+                    e_lights = 3'b100; //R
+                    w_lights = 3'b100; //R
+                end // case: south
+
+            south_y :
+                begin
+                    n_lights = 3'b100; //R
+                    s_lights = 3'b010; //Y
+                    e_lights = 3'b100; //R
+                    w_lights = 3'b100; //R
+                end // case: south_y
+
+            west :
+                begin
+                    n_lights = 3'b100; //R
+                    s_lights = 3'b100; //R
+                    e_lights = 3'b100; //R
+                    w_lights = 3'b001; //G
+                end // case: west
+
+            west_y :
+                begin
+                    n_lights = 3'b100; //R
+                    s_lights = 3'b100; //R
+                    e_lights = 3'b100; //R
+                    w_lights = 3'b010; //Y
+                end // case: west_y
+
+            east :
+                begin
+                    n_lights = 3'b100; //R
+                    s_lights = 3'b100; //R
+                    e_lights = 3'b001; //G
+                    w_lights = 3'b100; //R
+                end // case: east
+
+            east_y :
+                begin
+                    n_lights = 3'b100; //R
+                    s_lights = 3'b100; //R
+                    e_lights = 3'b010; //Y
+                    w_lights = 3'b100; //R
+                end // case: east_y
+            endcase // case (state)
+    end // always @ (state)
+endmodule
