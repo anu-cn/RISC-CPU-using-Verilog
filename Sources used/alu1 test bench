@@ -1,0 +1,25 @@
+module alu1_tb;
+reg [3:0] A,B;
+reg [2:0] Op;
+wire [3:0] alu_out;
+
+alu1 a(A,B,Op,alu_out);
+
+initial
+begin
+    $dumpfile("alu1.vcd");
+    $dumpvars(0,alu1_tb);
+    $monitor ($time , "  A=%b, B=%b, Operation=%b Result=%b",A,B,Op,alu_out);
+
+    Op=3'b001; A=4'b0011 ; B=4'b0001;
+    #10
+    Op=3'b010; A=4'b0011 ; B=4'b0001;
+    #10
+    Op=3'b011; A=4'b0011 ; B=4'b0001;
+    #10
+    Op=3'b100; A=4'b0011 ; B=4'b0001;
+    #10
+    Op=3'b101; A=4'b0011 ; B=4'b0001;
+    #10 $finish;
+end
+endmodule
