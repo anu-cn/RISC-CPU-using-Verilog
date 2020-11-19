@@ -1,0 +1,34 @@
+module alu2(A,B,sel,out,carryout);
+input [7:0] A,B;
+input [3:0] sel;
+output [7:0] out;
+output carryout;//carry out flag
+
+reg [7:0] result;
+wire [8:0] tmp;
+assign out=result;
+assign tmp={1'b0,A}+{1'b0,B};
+assign carryout =tmp[8];
+always @(*)
+begin
+    case(sel)
+        4'b0000: result =A+B;
+        4'b0001: result =A-B;
+        4'b0010: result =A*B;
+        4'b0011: result =A/B;
+        4'b0100: result =A<<B; //logical shift left
+        4'b0101: result =A>>B; //logical shift right
+        4'b0110: result ={A[6:0],A[7]};//rotate left
+        4'b0111: result ={A[0],A[7:1]}; //rotate right 
+        4'b1000: result =A&B;
+        4'b1001: result =A|B;
+        4'b1010: result =A^B;
+        4'b1011: result =~(A|B);
+        4'b1100: result =~(A&B);
+        4'b1101: result =~(A^B);
+        4'b1110: result =(A>B)?8'd1:8'd0; //greater comparison
+        4'b1111: result =(A==B)?8'd1:8'd0;//equal comparison
+        default:result=0;
+    endcase
+end
+endmodule
