@@ -1,0 +1,29 @@
+module alu2_tb;
+
+reg [7:0] A,B;
+reg [3:0] sel;
+wire [7:0] out;
+wire carryout;
+
+integer i;
+alu2 a(A,B,sel,out,carryout);
+initial 
+begin
+    $dumpfile("alu2.vcd");
+    $dumpvars(0,alu2_tb);
+    $monitor ($time , "  A=%b, B=%b, sel=%b Result=%b carry=%b",A,B,sel,out,carryout);
+
+    A= 8'h0A;
+    B= 8'h02;
+    sel = 4'h0;
+    #10
+    for(i=0;i<15;i=i+1)
+    begin
+        sel=sel+4'h1;
+        #10;
+    end    
+
+    A=8'hF6;
+    B=8'h0A;
+end
+endmodule
